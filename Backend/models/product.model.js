@@ -32,6 +32,11 @@ const productSchema=new Schema({
     default:0,
     min:0
   },
+  owner:{
+    type:Schema.Types.ObjectId,
+    ref:"User",
+    required:true,
+  },
   images:{
     type:[{
     url:{
