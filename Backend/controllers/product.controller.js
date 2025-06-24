@@ -3,7 +3,7 @@ import { uploadOnCloudinary, deleteFromCloudinary } from "../utils/cloudinary.js
 import ApiError from "../utils/apiError.js"
 import ApiResponse from "../utils/apiResponse.js"
 import { Product } from "../models/product.model.js"
-import mongoose from "mongoose"
+import { Category } from "../models/category.model.js"
 
 const getProduct = asyncHandler(async (req, res) => {
   const productId = req.params?.productId
@@ -34,7 +34,7 @@ const addProduct = asyncHandler(async (req, res) => {
   const myCategoryId = null
   if (!isCategoryExists) {
     const newCategory = await Category.create({
-      name: category.toLowerCase(),
+      title: category.toLowerCase(),
       description: ""
     })
     myCategoryId = newCategory._id
