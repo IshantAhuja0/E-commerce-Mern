@@ -29,7 +29,7 @@ const addProduct = asyncHandler(async (req, res) => {
   
   if (!title || !price || !stock || !category) throw new ApiError(400, "title ,price,stock and category are required to add product")
   if (title.trim().length === 0 || price === 0 || stock === 0 || category.trim().length === 0) throw new ApiError(400, "title ,price,stock and category are required to add product and should not empty or 0")
-  const isCategoryExists = await Category.find({ name: category.toLowerCase() })
+  const isCategoryExists = await Category.findOne({ name: category.toLowerCase() })
   //category not exist ,so make a new category
   const myCategoryId = null
   if (!isCategoryExists) {

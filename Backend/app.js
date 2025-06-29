@@ -14,11 +14,17 @@ app.use(cookieParser())
 
 
 // routes imports
-import router from "./routes/user.routes.js";
+import userRouter from "./routes/user.routes.js";
+import productRouter from "./routes/product.routes.js";
+import variantRouter from "./routes/variant.routes.js";
+
+
 // routes declaration
 app.get("/",(req,res)=>{
   res.send("all good in server")
 })
-app.use('/api/users',router);
+app.use('/api/users',userRouter);
+app.use('/api/product',productRouter);
+app.use('/api/variant',variantRouter);
 
 export {app};
