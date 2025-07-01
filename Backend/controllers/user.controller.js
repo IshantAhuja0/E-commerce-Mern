@@ -33,7 +33,7 @@ const register = async (req, res) => {
       user: newUser,
     });
   } catch (err) {
-    console.log(err); // ✅ move this before return
+    console.log(err); 
     return res.status(500).json({
       message: "An error occurred",
       error: err.message,
@@ -48,17 +48,6 @@ const login=async(req,res)=>
     {
    return res.status(400).json({message:"All fields are required"})
     }  
-  const token = jwt.sign(
-    { id: User._id, role: User.role },
-    process.env.JWT_SECRET,
-    { expiresIn: process.env.JWT_EXPIRES_IN }
-  );
-  res.cookie("token", token, {
-    httpOnly: true,
-    secure: false,
-    sameSite: "Strict",
-    maxAge: 24 * 60 * 60 * 1000
-  });
     try
     {
 const user=await User.findOne({email})
@@ -67,7 +56,20 @@ if(!user)
 const result=await bcrypt.compare(password, user.password)
 if(!result)
     return res.status(400).json({message:"Incorrect Password"})
-else
+   const token = jwt.sign(
+    { _id: user._id, role: user.role },
+    process.env.JWT_SECRET,
+    { expiresIn: process.env.JWT_EXPIRES_IN }
+  );
+  res.cookie("token", token, {
+    httpOnly: false,
+    secure: false,
+    sameSite: "Strict",
+    maxAge: 24 * 60 * 60 * 1000
+
+  });
+console.log("Token from cookie:", token);
+
 return res.status(200).json({message:"Login Successfully!",user:user})
     }
     catch(err)
@@ -76,4 +78,59 @@ return res.status(200).json({message:"Login Successfully!",user:user})
        
     }
 }
-export  {login,register}
+
+const getProfile=async(req,res)=>
+{
+const userId=req.user._id;
+try
+{
+const result=await User.findById(userId)
+if(!result)
+  return res.status(404).json("User not Found!")
+else
+return res.status(201).json({result})
+}
+catch(err)
+{
+  return res.status(500).json({message:"Error Occured",error:err.message})
+}
+}
+
+const deleteProfile=async(req,res)=>
+{
+const userId=req.user._id;
+  try{
+  const result=await User.findByIdAndDelete(userId)
+  if(!result)
+return res.status(404).json("User not Found")
+  else
+  return res.status(200).json("Profile deleted Successfully!")
+  }
+  catch(err)
+  {
+  return res.status(500).json({message:"Error Occured",error:err.message})
+  }
+}
+
+const updateProfile=async(req,res)=>
+{
+ const userId=req.user._id;
+  const updates=req.body;
+  try{
+const result=await User.findByIdAndUpdate(userId,updates,{new:true})
+return res.status(200).json({message:"Profile Updated SuccessFully!"})
+  }
+  catch(err)
+  {
+    return res.status(500).json({message:"Error Occured",error:err.message})
+  }
+}
+const logout = (req, res) => {
+  res.clearCookie("token", {
+    httpOnly: true,
+    sameSite: "none"
+  });
+
+  return res.status(200).json({message: "Logged out successfully"});
+};
+export  {login,register,getProfile,deleteProfile,updateProfile,logout}
