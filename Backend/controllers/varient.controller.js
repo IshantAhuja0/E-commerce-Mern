@@ -30,13 +30,14 @@ const deleteVariant = asyncHandler(async (req, res) => {
         localField: "productId",
         foreignField: "_id",
         as: "productDetails",
+        //sub-pipeline in product
         pipeline: [
           {
             $lookup: {
               from: "users",
               localField: "owner",
               foreignField: "_id",
-              as: "owner"
+              as: "owner",
             }
           },
           {
@@ -48,12 +49,14 @@ const deleteVariant = asyncHandler(async (req, res) => {
           {
             $project: {
               _id: 1,
+
               owner: {
                 _id: 1,
                 name: 1,
                 email: 1,
                 role: 1
               },
+              
               categoryId: 1,
               title: 1
             }

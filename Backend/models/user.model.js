@@ -11,6 +11,9 @@ const userSchema = new mongoose.Schema(
             required: true,
             unique: true,
         },
+          googleId: {
+             type: String, unique: true 
+            },
         mobile_number:
         {
             type: Number,
@@ -35,4 +38,4 @@ const userSchema = new mongoose.Schema(
         timestamps: true
     }
 )
-export default mongoose.model("User",userSchema);
+export const User=mongoose.model("User",userSchema)
