@@ -19,7 +19,7 @@ export const loginLimiter = async (req, res, next) => {
     const ip = req.ip || req.headers['x-forwarded-for'] || req.connection.remoteAddress;
     const key = `login_attempts:${ip}`;
     const maxAttempts = 5;
-    const windowSec = 15 * 60; // 15 minutes
+    const windowSec = 10 * 60; // 15 minutes
 
     // 🚀 Increment login attempts
     const attempts = await redis.incr(key);
