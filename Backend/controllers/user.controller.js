@@ -1,6 +1,7 @@
 import { User } from "../models/user.model.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken"
+import { Cart } from "../models/cart.model.js";
 const register = async (req, res) => {
   const { name, email, password, mobile_number, role, isVerified } = req.body;
 
@@ -9,9 +10,8 @@ const register = async (req, res) => {
   }
 
   try {
-    const user = await User.findOne({ email });
-
-    if (user) {
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
       return res.status(400).json({
         message: "User already exists! Try with some other Email ID",
       });
@@ -28,19 +28,27 @@ const register = async (req, res) => {
       isVerified: isVerified || false,
     });
 
+    // Create an empty cart for the new user
+    try {
+      const cart = await Cart.create({ userId: newUser._id });
+      console.log("Cart created successfully for user:", newUser._id);
+    } catch (cartErr) {
+      console.error("Error while creating cart:", cartErr.message);
+    }
+
     return res.status(200).json({
       message: "User Registered Successfully!",
       user: newUser,
     });
+
   } catch (err) {
-    console.log(err); 
+    console.error("Registration Error:", err.message);
     return res.status(500).json({
       message: "An error occurred",
       error: err.message,
     });
   }
 };
-
 const login=async(req,res)=>
 {
  const{email,password}=req.body;
