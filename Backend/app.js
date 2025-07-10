@@ -16,7 +16,7 @@ app.use(express.static("public"))
 app.use(cookieParser())
 app.use(passport.initialize());
 // routes imports
-import cartRoutes from "./routes/cart.routes.js";
+//import cartRoutes from "./routes/cart.routes.js";
 import cartItemRoutes from "./routes/cartItem.routes.js";
 import router from "./routes/user.routes.js";
 import productRouter from "./routes/product.routes.js";
@@ -30,7 +30,7 @@ app.use('/api/users',router);
 app.use('/api/product',productRouter);
 
 //cart routes
-app.use("/api/cart", cartRoutes);
+// app.use("/api/cart", cartRoutes);
 app.use("/api/cart-items", cartItemRoutes);
 
 export {app};

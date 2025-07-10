@@ -5,7 +5,8 @@ import { Cart } from "../models/cart.model.js";
 export const addToCart = async (req, res) => {
   const userId = req.user._id;
   const { productId, variantId, quantity, price } = req.body;
-
+if(!productId||!variantId||!quantity||!price)
+res.send("All fiels are required")
   try {
     const cart = await Cart.findOne({ userId });
 
