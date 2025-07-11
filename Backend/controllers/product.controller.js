@@ -17,25 +17,28 @@ const getProduct = asyncHandler(async (req, res) => {
 const addProduct = asyncHandler(async (req, res) => {
   const { title, description = "", price, stock, category } = req.body
   const files = req.files
+  const owner = req.user._id
+  if (req.user.role !== "seller") throw new ApiError(402, "only authorized seller can add products")
   if (!files || files.length === 0) {
     return res.status(400).json(new ApiResponse(400, "At least one image is required."));
   }
-    //i haven't tested or checked this part 
+  //i haven't tested or checked this part 
   const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
   const validImages = files.filter(file => ALLOWED_TYPES.includes(file.mimetype));
-  if (validImages.length !== images.length) {
+  if (validImages.length !== files.length) {
     throw new ApiError(400, "Some files are not valid image types (jpg, png, webp only).");
   }
-  
+
   if (!title || !price || !stock || !category) throw new ApiError(400, "title ,price,stock and category are required to add product")
-  if (title.trim().length === 0 || price === 0 || stock === 0 || category.trim().length === 0) throw new ApiError(400, "title ,price,stock and category are required to add product and should not empty or 0")
-  const isCategoryExists = await Category.findOne({ name: category.toLowerCase() })
+  if (title.trim().length === 0 || Number(price) === 0 || Number(stock) === 0 || category.trim().length === 0) throw new ApiError(400, "title ,price,stock and category are required to add product and should not empty or 0")
+  const isCategoryExists = await Category.findOne({ title: category.toLowerCase() })
   //category not exist ,so make a new category
-  const myCategoryId = null
+  let myCategoryId = null
   if (!isCategoryExists) {
     const newCategory = await Category.create({
       title: category.toLowerCase(),
-      description: ""
+      description: "",
+      slug: category.toLowerCase()
     })
     myCategoryId = newCategory._id
   }
@@ -48,7 +51,7 @@ const addProduct = asyncHandler(async (req, res) => {
   )
   const images = uploadImages.map((image) => ({
     url: image.secure_url,
-    public_id: image.puclic_id
+    public_id: image.public_id
   }))
   if (!images) throw new ApiError(500, "problem occured while uploading images during add product")
   const newProduct = await Product.create({
@@ -57,6 +60,7 @@ const addProduct = asyncHandler(async (req, res) => {
     price,
     stock,
     images,
+    owner,
     categoryId: myCategoryId
   })
   if (!newProduct) throw new ApiError(500, "problem occured while adding product")

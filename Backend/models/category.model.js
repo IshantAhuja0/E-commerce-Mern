@@ -35,10 +35,12 @@ const categorySchema = new Schema({
         required: true,
       },
     }],
-    validate: {
-      validator: [arrayLimit],
-      message: 'At least one image is required'
-    }
+    // validate: {
+    //   validator: function (val) {
+    //     return val.length > 0
+    //   },
+    //   message: 'At least one image is required'
+    // }
   }
 }
   , { timestamps: true })
