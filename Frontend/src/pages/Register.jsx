@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import { FcGoogle } from 'react-icons/fc';
 // Assuming you're using React Router for navigation
 import { Link } from 'react-router-dom';
+import axios from 'axios';
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -23,15 +24,24 @@ const Register = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (formData.password !== formData.confirmPassword) {
-      alert("Passwords do not match!");
-      return;
-    }
-    const { confirmPassword, ...dataToSubmit } = formData;
-    console.log('Registering with:', dataToSubmit);
-  };
+  const handleSubmit = async (e) => {
+  e.preventDefault();
+  if (formData.password !== formData.confirmPassword) {
+    alert("Passwords do not match!");
+    return;
+  }
+
+  try {
+    const { confirmPassword, ...dataToSubmit } = formData; // exclude confirmPassword
+    const res = await axios.post("http://localhost:3000/api/users/register",dataToSubmit );
+    console.log("Registered successfully", res.data);
+    alert("User registered successfully!");
+    setFormData("")
+  } catch (err) {
+    console.error("Error while registering", err);
+    alert("Registration failed");
+  }
+};
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-slate-100 font-sans p-4">
@@ -108,9 +118,9 @@ const Register = () => {
               </label>
               <motion.input
                 whileFocus={{ scale: 1.02 }}
-                id="mobileNumber" name="mobileNumber" type="tel"
+                id="mobileNumber" name="mobile_number" type="tel"
                 required
-                value={formData.mobileNumber} onChange={handleChange}
+                value={formData.mobile_number} onChange={handleChange}
                 className="w-full px-4 py-3 bg-slate-50 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-midnight/50 transition"
                 placeholder="123-456-7890"
               />
@@ -151,7 +161,7 @@ const Register = () => {
     whileHover={{ scale: 1.02, y: -2, filter: "brightness(1.1)" }}
     whileTap={{ scale: 0.98 }}
     type="submit"
-    className="w-full py-3 px-2 bg-midnight text-white font-bold rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-midnight transition-all"
+    className="w-full py-3 px-2 bg-midnight text-gray-700 font-bold rounded-lg focus:outline-none bg-blue-400  focus:ring-2 focus:ring-offset-2 focus:ring-midnight transition-all"
   >
     Create Account
   </motion.button>

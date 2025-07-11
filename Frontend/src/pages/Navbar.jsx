@@ -1,71 +1,89 @@
-import { useState } from "react";
-import { FaHeart, FaShoppingCart, FaSearch } from "react-icons/fa";
-import React from "react";
-import Home from "./Home"; // Assuming Home is a component you want to render
-export default function Navbar() {
-  const [showSearch, setShowSearch] = useState(false);
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { FaUserAlt } from "react-icons/fa";
+import { FiShoppingCart } from "react-icons/fi";
+import { IoIosHeart } from "react-icons/io";
+import LoginModal from './LoginModal'; // ✅ Import modal
+
+const Navbar = () => {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [showLoginModal, setShowLoginModal] = useState(false); 
+
+  const navigate = useNavigate();
+
+  const handleProtectedClick = () => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      setShowLoginModal(true); 
+    } else {
+      alert("Allowed (User logged in)");
+    }
+  };
 
   return (
-    <div className="w-full sticky top-0 z-50 bg-white shadow-sm border-b border-gray-200 font-sans">
-      {/* TOP BAR */}
-      <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
-        {/* Brand */}
-        <div className="text-xl md:text-2xl font-bold text-gray-800 tracking-wide">
-          AURENZA
-        </div>
-
-        {/* Desktop Nav Links */}
-        <div className="hidden md:flex space-x-8 text-sm font-medium text-gray-700">
-          <a href="#" className="hover:text-black transition duration-200">ALL</a>
-          <a href="#" className="hover:text-black transition duration-200">Women</a>
-          <a href="#" className="hover:text-black transition duration-200">Men</a>
-          <a href="#" className="hover:text-black transition duration-200">Kids</a>
-        </div>
-
-        {/* Icons + Search */}
-        <div className="flex items-center gap-4 text-gray-700 text-lg relative">
-          {/* Toggle search on small screens */}
-          <button
-            onClick={() => setShowSearch(!showSearch)}
-            className="md:hidden hover:text-pink-500 transition"
-          >
-            <FaSearch />
-          </button>
-
-          {/* Desktop Search Bar */}
-          <div className="hidden md:flex w-64">
-            <input
-              type="text"
-              placeholder="Search..."
-              className="w-full px-4 py-1.5 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-pink-400 text-sm"
-            />
-          </div>
-
-          <FaHeart className="hover:text-pink-500 cursor-pointer transition" />
-          <FaShoppingCart className="hover:text-pink-500 cursor-pointer transition" />
-        </div>
+    <header className="bg-white shadow-sm py-4 px-6 md:px-12 flex justify-between items-center sticky top-0 z-50 rounded-b-lg">
+      <div className="text-2xl font-bold text-gray-900">
+        <Link to="/">Aura Threads</Link>
       </div>
 
-      {/* Mobile Nav Links */}
-      <div className="md:hidden px-4 pb-3 flex justify-around text-sm font-medium text-gray-700 border-t border-gray-100">
-        <a href="#" className="hover:text-black transition">ALL</a>
-        <a href="#" className="hover:text-black transition">Women</a>
-        <a href="#" className="hover:text-black transition">Men</a>
-        <a href="#" className="hover:text-black transition">Kids</a>
+      <nav className="hidden md:block">
+        <ul className="flex space-x-8">
+          <Link to="/" className="text-lg font-medium hover:text-indigo-500">Featured</Link>
+          <Link to="/mens-section" className="text-lg font-medium hover:text-indigo-500">Men</Link>
+          <Link to="/women-section" className="text-lg font-medium hover:text-indigo-500">Women</Link>
+          <Link to="/kids-section" className="text-lg font-medium hover:text-indigo-500">Kids</Link>
+          <Link to="/about" className="text-lg font-medium hover:text-indigo-500">About</Link>
+        </ul>
+      </nav>
+
+      <div className="hidden lg:block">
+        <input
+          type="text"
+          placeholder="Search..."
+          className="px-3 py-2 border border-gray-300 rounded-md"
+        />
       </div>
 
-      {/* Mobile Search Bar (toggle) */}
-      {showSearch && (
-        <div className="md:hidden px-4 pb-3 animate-fade-in-down">
-          <input
-            type="text"
-            placeholder="Search products..."
-            className="w-full px-4 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-pink-400 text-sm"
-          />
+      <div className="flex items-center space-x-4">
+        <button className="md:hidden p-2">🔍</button>
+
+        {/* ❤️ Wishlist */}
+        <Link to="/wishlist" className="text-2xl" onClick={handleProtectedClick}>
+          <IoIosHeart />
+        </Link>
+
+        {/* 🛒 Cart */}
+        <Link to="/cart" className="relative text-2xl" onClick={handleProtectedClick}>
+          <FiShoppingCart />
+          <span className="absolute -top-1 -right-1 text-xs bg-red-500 text-white rounded-full h-4 w-4 flex justify-center items-center">0</span>
+        </Link>
+
+        {/* 👤 Account */}
+        <Link to="/profile" className="text-2xl"><FaUserAlt /></Link>
+
+        {/* ☰ Mobile Menu */}
+        <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="md:hidden">
+          ☰
+        </button>
+      </div>
+
+      {/* Mobile Nav */}
+      {isMenuOpen && (
+        <div className="absolute top-16 left-0 w-full bg-white border-t shadow-md md:hidden">
+          <ul className="flex flex-col space-y-4 px-6 py-4">
+            <li><Link to="/" className="text-gray-600 hover:text-gray-900">New Arrivals</Link></li>
+            <li><Link to="/women-section" className="text-gray-600 hover:text-gray-900">Women</Link></li>
+            <li><Link to="/mens-section" className="text-gray-600 hover:text-gray-900">Men</Link></li>
+            <li><Link to="/kids-section" className="text-gray-600 hover:text-gray-900">Kids</Link></li>
+            <li><Link to="/about" className="text-gray-600 hover:text-gray-900">About</Link></li>
+          </ul>
         </div>
       )}
-      <Home />
-    </div>
-    
+
+      {/* ✅ Show Modal if user not logged in */}
+      {showLoginModal && <LoginModal onClose={() => setShowLoginModal(false)} />}
+    </header>
   );
-}
+};
+
+export default Navbar;

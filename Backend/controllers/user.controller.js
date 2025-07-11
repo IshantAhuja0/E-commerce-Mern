@@ -3,9 +3,9 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken"
 import { Cart } from "../models/cart.model.js";
 const register = async (req, res) => {
-  const { name, email, password, mobile_number, role, isVerified } = req.body;
+  const { name, email, password, mobile_number, role,isVerified } = req.body;
 
-  if (!name || !email || !password || !mobile_number || !role) {
+  if (!name || !email || !password || !mobile_number) {
     return res.status(400).json({ message: "All fields are required" });
   }
 
@@ -24,7 +24,7 @@ const register = async (req, res) => {
       email,
       mobile_number,
       password: hashpassword,
-      role,
+      role: role || "user",
       isVerified: isVerified || false,
     });
 
@@ -51,6 +51,8 @@ const register = async (req, res) => {
 };
 const login=async(req,res)=>
 {
+ 
+   console.log("Request body:", req.body)
  const{email,password}=req.body;
  if(!email|| !password)
     {
@@ -72,14 +74,14 @@ if(!result)
   res.cookie("token", token, {
     httpOnly: false,
     secure: false,
-    sameSite: "Strict",
+    sameSite: "lax",
     maxAge: 24 * 60 * 60 * 1000
 
   });
 console.log("Token from cookie:", token);
-
-return res.status(200).json({message:"Login Successfully!",user:user})
+return res.status(200).json({message:"Login Successfully!",user:user,token:token})
     }
+  
     catch(err)
     {
        return res.status(500).json({messge:"An error occured:",error:err.message})

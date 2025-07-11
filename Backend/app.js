@@ -1,8 +1,8 @@
 import express from "express";
 import cookieParser from "cookie-parser";
 import cors from "cors"
-import passport from "passport";
-import "./config/passport.js";
+// // import passport from "passport";
+// import "./config/passport.js";
 
 const app=express();
 app.use(cors({
@@ -14,7 +14,7 @@ app.use(express.json({limit:"16kb"}))
 app.use(express.urlencoded({extended:true,limit:"16kb"}))
 app.use(express.static("public"))
 app.use(cookieParser())
-app.use(passport.initialize());
+// app.use(passport.initialize());
 // routes imports
 //import cartRoutes from "./routes/cart.routes.js";
 import cartItemRoutes from "./routes/cartItem.routes.js";
