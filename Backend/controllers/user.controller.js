@@ -35,7 +35,6 @@ const register = async (req, res) => {
     } catch (cartErr) {
       console.error("Error while creating cart:", cartErr.message);
     }
-
     return res.status(200).json({
       message: "User Registered Successfully!",
       user: newUser,

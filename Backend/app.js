@@ -20,6 +20,7 @@ app.use(passport.initialize());
 import cartItemRoutes from "./routes/cartItem.routes.js";
 import router from "./routes/user.routes.js";
 import productRouter from "./routes/product.routes.js";
+import wishlist from "./routes/wishlist.routes.js"
 // import authRoutes from "./routes/"
 // routes declaration
 app.get("/",(req,res)=>{
@@ -30,7 +31,9 @@ app.use('/api/users',router);
 app.use('/api/product',productRouter);
 
 //cart routes
-// app.use("/api/cart", cartRoutes);
 app.use("/api/cart-items", cartItemRoutes);
+
+//wishlist routes
+app.use("/api/wishlist",wishlist);
 
 export {app};
