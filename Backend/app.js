@@ -20,12 +20,12 @@ app.use(passport.initialize());
 import cartItemRoutes from "./routes/cartItem.routes.js";
 import router from "./routes/user.routes.js";
 import productRouter from "./routes/product.routes.js";
-// import authRoutes from "./routes/"
+import variantRouter from "./routes/variant.routes.js";
+import categoryRouter from "./routes/category.routes.js";
 // routes declaration
 app.get("/",(req,res)=>{
   res.send("all good in server")
 })
-// app.use("/auth", authRoutes);
 app.use('/api/users',router);
 app.use('/api/product',productRouter);
 
@@ -33,4 +33,7 @@ app.use('/api/product',productRouter);
 // app.use("/api/cart", cartRoutes);
 app.use("/api/cart-items", cartItemRoutes);
 
+//varient
+app.use("api/variant",variantRouter)
+app.use("api/category",categoryRouter)
 export {app};

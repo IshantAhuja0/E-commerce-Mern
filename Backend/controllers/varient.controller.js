@@ -1,8 +1,8 @@
-import asyncHandler from "../utils/asyncHandler";
-import ApiError from "../utils/apiError";
-import ApiResponse from "../utils/apiResponse";
-import { Product } from "../models/product.model";
-import { Variant } from "../models/variant.model";
+import asyncHandler from "../utils/asyncHandler.js";
+import ApiError  from "../utils/apiError.js";
+import ApiResponse from "../utils/apiResponse.js";
+import { Product } from "../models/product.model.js";
+import { Variant } from "../models/variant.model.js";
 import mongoose from "mongoose";
 const getAllVarients = asyncHandler(async (req, res) => {
   const { productId } = req.params || req.body
