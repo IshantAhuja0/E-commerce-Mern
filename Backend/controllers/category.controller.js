@@ -1,13 +1,17 @@
-import mongoose from "mongoose"
 import { Category } from "../models/category.model.js"
 import ApiError from "../utils/apiError.js"
 import ApiResponse from "../utils/apiResponse.js"
-import asyncHandler from "../utils/apiResponse.js"
+import asyncHandler from "../utils/asyncHandler.js"
 //get all parent categories in which parentCategory===null
-const getAllCategories = asyncHandler(async (req, res) => {
-  const categories = await Category.find({ parentCategory: null })
-  if (!categories || categories.length === 0) throw new ApiError(500, "problem while fetching categories")
-  return res.status(200).json(200, categories, "fetched all categories successfully")
+const getAllCategories=asyncHandler(async(req,res)=>{
+    const categories = await Category.find({ parentCategory: null });
+
+  if (!categories || categories.length === 0) {
+    throw new ApiError(404, "No categories found");
+  }
+  return res
+    .status(200)
+    .json({status:200, data:categories,message: "Fetched all categories successfully"});
 })
 
 //get all sub-categories in which parentCategory===input
@@ -15,8 +19,8 @@ const getAllSubCategories = asyncHandler(async (req, res) => {
   const { categoryId } = req.params
   if (!categoryId || ! await Category.exists({ _id: categoryId })) throw new ApiError(400, "A valid category ID must be provided to fetch sub-categories.")
   const categories = await Category.find({ parentCategory: categoryId })
-  if (!categories || categories.length === 0) return res.status(200).json(ApiResponse(200, [], "No subcategories found against provided category"))
-  return res.status(200).json(200, categories, "fetched all categories successfully")
+  if (!categories || categories.length === 0) return res.status(200).json(new ApiResponse(200, [], "No subcategories found against provided category"))
+  return res.status(200).json(new ApiResponse( 200, categories, "fetched all categories successfully"))
 })
 
 const deleteCategory = asyncHandler(async (req, res) => {
@@ -76,4 +80,4 @@ const addCategory = asyncHandler(async (req, res) => {
   if (!newCategory) throw new ApiError(500, "problem occured while adding category")
   return res.status(200).json(new ApiResponse(200, newCategory, "category added"))
 })
-export { getAllCategories, getAllSubCategories, deleteCategory, addCategory }
+export {  getAllSubCategories, deleteCategory, addCategory,getAllCategories }
