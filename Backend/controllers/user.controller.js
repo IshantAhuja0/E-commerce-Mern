@@ -3,9 +3,9 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken"
 import { Cart } from "../models/cart.model.js";
 const register = async (req, res) => {
-  const { name, email, password, mobile_number, role, isVerified } = req.body;
+  const { name, email, password, mobile_number, role,isVerified } = req.body;
 
-  if (!name || !email || !password || !mobile_number || !role) {
+  if (!name || !email || !password || !mobile_number) {
     return res.status(400).json({ message: "All fields are required" });
   }
 
@@ -24,7 +24,7 @@ const register = async (req, res) => {
       email,
       mobile_number,
       password: hashpassword,
-      role,
+      role: role || "user",
       isVerified: isVerified || false,
     });
 

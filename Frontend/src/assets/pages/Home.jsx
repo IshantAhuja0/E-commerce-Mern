@@ -1,9 +1,7 @@
 import React from "react";
-import { useState } from "react";
-// import { motion } from 'framer-motion'; // Uncomment this line if you have framer-motion installed
+import { useState ,useEffect} from "react";
+import LoginPopup from "./LoginPopup";
 
-// Placeholder for motion component if framer-motion is not imported
-// These mock components explicitly filter out Framer Motion specific props to prevent React warnings.
 const motion = {
   div: ({
     children,
@@ -51,14 +49,25 @@ const motion = {
     ...rest
   }) => <h2 {...rest}>{children}</h2>,
 };
+
+  
 // Main App Component
 const Home = () => {
+  const [showPopup, setShowPopup] = useState(false)
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      const timer = setTimeout(() => {
+        setShowPopup(true);
+      }, 5000); // 30 seconds
+
+      return () => clearTimeout(timer); 
+    }
+  }, []);
   return (
     <div className="min-h-screen bg-gray-50 font-sans text-gray-800 antialiased">
-      {/* Header Section */}
-      <Header />
-
       {/* Main Content */}
+      {showPopup && <LoginPopup onClose={() => setShowPopup(false)} />}
       <main>
         {/* Hero Section */}
         <HeroSection />
@@ -75,86 +84,11 @@ const Home = () => {
         {/* Promotions Section */}
         <PromotionsSection />
       </main>
-
-      {/* Footer Section */}
-      <Footer />
     </div>
   );
 };
 
-// Header Component
-const Header = () => {
-    const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  return (
-     <header className="bg-white shadow-sm py-4 px-6 md:px-12 flex justify-between items-center sticky top-0 z-50 rounded-b-lg">
-      {/* Logo */}
-      <div className="text-2xl font-bold text-gray-900">
-        <a href="#">Aura Threads</a>
-      </div>
-
-      {/* Desktop Nav */}
-      <nav className="hidden md:block">
-        <ul className="flex space-x-8">
-          <li><a href="#" className="text-gray-600 hover:text-gray-900">New Arrivals</a></li>
-          <li><a href="#" className="text-gray-600 hover:text-gray-900">Women</a></li>
-          <li><a href="#" className="text-gray-600 hover:text-gray-900">Men</a></li>
-          <li><a href="#" className="text-gray-600 hover:text-gray-900">Kids</a></li>
-          <li><a href="#" className="text-gray-600 hover:text-gray-900">Sale</a></li>
-          <li><a href="#" className="text-gray-600 hover:text-gray-900">About</a></li>
-        </ul>
-      </nav>
-
-      {/* Search Bar (optional on desktop) */}
-      <div className="hidden lg:block">
-        <input
-          type="text"
-          placeholder="Search..."
-          className="px-3 py-2 border border-gray-300 rounded-md"
-        />
-      </div>
-
-      {/* Icons + Mobile Button */}
-      <div className="flex items-center space-x-4">
-        {/* Search Icon for mobile */}
-        <button className="md:hidden p-2">
-          🔍
-        </button>
-
-        {/* Account */}
-        <button>👤</button>
-
-        {/* Cart */}
-        <button className="relative">
-          🛒
-          <span className="absolute -top-1 -right-1 text-xs bg-red-500 text-white rounded-full h-4 w-4 flex justify-center items-center">0</span>
-        </button>
-
-        {/* Hamburger menu for mobile */}
-        <button
-          onClick={() => setIsMenuOpen(!isMenuOpen)}
-          className="md:hidden"
-        >
-          ☰
-        </button>
-      </div>
-
-      {/* Mobile Nav Menu */}
-      {isMenuOpen && (
-        <div className="absolute top-16 left-0 w-full bg-white border-t shadow-md md:hidden">
-          <ul className="flex flex-col space-y-4 px-6 py-4">
-            <li><a href="#" className="text-gray-600 hover:text-gray-900">New Arrivals</a></li>
-            <li><a href="#" className="text-gray-600 hover:text-gray-900">Women</a></li>
-            <li><a href="#" className="text-gray-600 hover:text-gray-900">Men</a></li>
-            <li><a href="#" className="text-gray-600 hover:text-gray-900">Kids</a></li>
-            <li><a href="#" className="text-gray-600 hover:text-gray-900">Sale</a></li>
-            <li><a href="#" className="text-gray-600 hover:text-gray-900">About</a></li>
-          </ul>
-        </div>
-      )}
-    </header>
-  );
-}
   //Hero 
 const HeroSection = () => {
   return (
@@ -503,107 +437,6 @@ const PromotionsSection = () => {
   );
 };
 
-// Footer Component
-const Footer = () => {
-  return (
-    <footer className="bg-gray-900 text-gray-300 py-12 px-6 md:px-12 rounded-t-lg mt-4">
-      <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-8">
-        {/* About Us */}
-        <div>
-          <h4 className="text-lg font-semibold text-white mb-4">
-            Aura Threads
-          </h4>
-          <p className="text-sm">
-            Crafting timeless elegance and modern luxury for the discerning
-            individual. Quality and style, redefined.
-          </p>
-        </div>
 
-        {/* Quick Links */}
-        <div>
-          <h4 className="text-lg font-semibold text-white mb-4">Quick Links</h4>
-          <ul className="space-y-2 text-sm">
-            <li>
-              <a href="#" className="hover:text-white transition duration-300">
-                Shop All
-              </a>
-            </li>
-            <li>
-              <a href="#" className="hover:text-white transition duration-300">
-                Sale
-              </a>
-            </li>
-            <li>
-              <a href="#" className="hover:text-white transition duration-300">
-                Account
-              </a>
-            </li>
-            <li>
-              <a href="#" className="hover:text-white transition duration-300">
-                Contact Us
-              </a>
-            </li>
-          </ul>
-        </div>
-
-        {/* Customer Service */}
-        <div>
-          <h4 className="text-lg font-semibold text-white mb-4">
-            Customer Service
-          </h4>
-          <ul className="space-y-2 text-sm">
-            <li>
-              <a href="#" className="hover:text-white transition duration-300">
-                FAQs
-              </a>
-            </li>
-            <li>
-              <a href="#" className="hover:text-white transition duration-300">
-                Shipping & Returns
-              </a>
-            </li>
-            <li>
-              <a href="#" className="hover:text-white transition duration-300">
-                Size Guide
-              </a>
-            </li>
-            <li>
-              <a href="#" className="hover:text-white transition duration-300">
-                Privacy Policy
-              </a>
-            </li>
-          </ul>
-        </div>
-
-        {/* Newsletter */}
-        <div>
-          <h4 className="text-lg font-semibold text-white mb-4">
-            Stay Connected
-          </h4>
-          <p className="text-sm mb-4">
-            Subscribe to our newsletter for exclusive updates and offers.
-          </p>
-          <form className="flex">
-            <input
-              type="email"
-              placeholder="Your email address"
-              className="p-3 rounded-l-md bg-gray-700 border border-gray-600 text-white text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 flex-grow"
-            />
-            <button
-              type="submit"
-              className="bg-indigo-600 hover:bg-indigo-700 text-white py-3 px-5 rounded-r-md transition duration-300"
-            >
-              Subscribe
-            </button>
-          </form>
-        </div>
-      </div>
-
-      <div className="border-t border-gray-700 mt-10 pt-8 text-center text-sm text-gray-500">
-        &copy; {new Date().getFullYear()} Aura Threads. All rights reserved.
-      </div>
-    </footer>
-  );
-};
 
 export default Home;

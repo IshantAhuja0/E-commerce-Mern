@@ -1,15 +1,32 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { FcGoogle } from 'react-icons/fc';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import axios from "axios"
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+const navigate=useNavigate();
+  const handleSubmit = async(e) => {
+    try
+    {
+      e.preventDefault();
+ const res=await axios.post("http://localhost:3000/api/users/login",
+{
+  email,password
+},{withCredentials:true})
+console.log("Token from response:", res.data.token);
+if(res.data.token)
+    localStorage.setItem("token",res.data.token)
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log('Logging in with:', { email, password });
-  };
+  alert("user logged in successfully!")
+navigate("/")
+    }
+    catch(err)
+    {
+    console.log("error Occured while logging in ",err)
+    }
+}
 
   return (
     // Changed background to a cooler grey to match the new palette
@@ -91,7 +108,7 @@ const Login = () => {
               required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-4 py-3 font-  medium bg-slate-50 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-midnight/50 transition"
+              className="w-full px-4 py-3 font-2xl  medium bg-slate-50 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-midnight/50 transition"
               placeholder="••••••••"
             />
           </div>
@@ -102,14 +119,14 @@ const Login = () => {
               whileTap={{ scale: 0.98 }}
               type="submit"
               // The main button now uses our beautiful 'midnight' blue
-              className="w-full py-3 px-4 bg-midnight text-white font-bold rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-midnight transition-all"
+              className="w-full py-3 px-4 bg-midnight text-grey-500 font-bold  bg-blue-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-midnight transition-all"
             >
               Sign In
             </motion.button>
           </div>
         </form>
 
-        <p className="text-center text-sm text-slate-500 font-medium">
+        <p className="text-center text- xl text-slate-500 font-medium">
           Don't have an account?{' '}
           {/* Sign up link also uses the accent color */}
           <Link to="/register" className="font-medium text-midnight hover:underline">
