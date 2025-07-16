@@ -91,40 +91,6 @@ const deleteProduct = asyncHandler(async (req, res) => {
 
 })
 
-// const updateProductStock = asyncHandler(async (req, res) => {
-//   const { productId, stock } = req.body
-//   const userId = req.user?._id
-//   const product = await Product.findById(productId)
-//   if (!product) throw new ApiError(400, "Invalid product id .product doesn't exist against provided productId")
-//   if (stock === undefined || stock < 0) throw new ApiError(400, "stock must be provide and not be negative")
-//   if (product.owner.toString() !== userId.toString()) throw new ApiError(400, "the user is not authorized to update this product")
-//   const updatedProduct = await Product.findOneAndUpdate(
-//     { _id: productId, owner: userId },
-//     { $set: { stock } },
-//     { runValidators: true, new: true }
-//   );
-//   if (!result.acknowledged || result.modifiedCount !== 1) throw new ApiError(500, "problem occured while updating stock of product in server")
-//   return res.status(200).json(new ApiResponse(200, updatedProduct, "product stock updated successfully"))
-
-// })
-
-// const updateProductPrice = asyncHandler(async (req, res) => {
-//   const { productId, price } = req.body
-//   const userId = req.user?._id
-//   const product = await Product.findById(productId)
-//   if (!product) throw new ApiError(400, "Invalid product id .product doesn't exist against provided productId")
-//   if (price === undefined || stock < 0) throw new ApiError(400, "price must be provide and not be negative")
-//   if (product.owner.toString() !== userId.toString()) throw new ApiError(400, "the user is not authorized to update this product")
-//   const updatedProduct = await Product.findOneAndUpdate(
-//     { _id: productId, owner: userId },
-//     { $set: { price } },
-//     { runValidators: true, new: true }
-//   );
-//   if (!result.acknowledged || result.modifiedCount !== 1) throw new ApiError(500, "problem occured while updating price of product in server")
-//   return res.status(200).json(new ApiResponse(200, updatedProduct, "product price updated successfully"))
-
-// })
-
 const updateProduct = asyncHandler(async (req, res) => {
   const { productId, title, description, price, stock } = req.body
   const userId = req.user?._id
@@ -208,4 +174,13 @@ const uploadImages = asyncHandler(async (req, res) => {
   if (!result) throw new ApiError(500, "problem occured while uploading images")
   return res.status(200).json(new ApiResponse(200, result, "images uploaded successfully"))
 })
-export { getProduct, addProduct, deleteProduct, updateProduct, deleteImages, uploadImages }
+
+const getInitialProducts= asyncHandler(async (req,res)=>{
+const category=req.params?.category
+const isCategoryExists = await Category.findOne({title:category})
+if(!isCategoryExists) throw new ApiError(404,"No category found")
+  const products=await Product.find({categoryId:isCategoryExists._id})
+if(!products||products.length===0) throw new ApiError(404,"No Products found in this category")
+  return res.status(200).json(new ApiResponse(200,products,"Products fetched successfully"))
+})
+export { getProduct, addProduct, deleteProduct, updateProduct, deleteImages, uploadImages ,getInitialProducts}

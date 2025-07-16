@@ -5,23 +5,20 @@ const userSchema = new mongoose.Schema(
             type: String,
             required: true,
         },
-        email:
-        {
+        email: {
             type: String,
             required: true,
             unique: true,
         },
-          googleId: {
-             type: String, unique: true 
-            },
-        mobile_number:
-        {
+        googleId: {
+            type: String, unique: true
+        },
+        mobile_number: {
             type: Number,
             required: true,
             unique: true
         },
-        password:
-        {
+        password: {
             type: String,
             required: true,
         },
@@ -30,9 +27,7 @@ const userSchema = new mongoose.Schema(
             required: true,
             default:"user"
         },
-        
-        isVerified:
-        {
+        isVerified: {
             type: Boolean
         }
     },
@@ -40,4 +35,4 @@ const userSchema = new mongoose.Schema(
         timestamps: true
     }
 )
-export const User=mongoose.model("User",userSchema)
+export const User = mongoose.model("User", userSchema)

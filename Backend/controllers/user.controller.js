@@ -35,7 +35,6 @@ const register = async (req, res) => {
     } catch (cartErr) {
       console.error("Error while creating cart:", cartErr.message);
     }
-
     return res.status(200).json({
       message: "User Registered Successfully!",
       user: newUser,
@@ -49,98 +48,87 @@ const register = async (req, res) => {
     });
   }
 };
-const login=async(req,res)=>
-{
- 
-   console.log("Request body:", req.body)
- const{email,password}=req.body;
- if(!email|| !password)
-    {
-   return res.status(400).json({message:"All fields are required"})
-    }  
-    try
-    {
-const user=await User.findOne({email})
-if(!user)
-    return res.status(401).json({message:"Invalid Email Address"})
-const result=await bcrypt.compare(password, user.password)
-if(!result)
-    return res.status(400).json({message:"Incorrect Password"})
-   const token = jwt.sign(
-    { _id: user._id, role: user.role },
-    process.env.JWT_SECRET,
-    { expiresIn: process.env.JWT_EXPIRES_IN }
-  );
-  res.cookie("token", token, {
-    httpOnly: false,
-    secure: false,
-    sameSite: "lax",
-    maxAge: 24 * 60 * 60 * 1000
 
-  });
-console.log("Token from cookie:", token);
-return res.status(200).json({message:"Login Successfully!",user:user,token:token})
-    }
-  
-    catch(err)
-    {
-       return res.status(500).json({messge:"An error occured:",error:err.message})
-       
-    }
-}
-
-const getProfile=async(req,res)=>
-{
-const userId=req.user._id;
-try
-{
-const result=await User.findById(userId)
-if(!result)
-  return res.status(404).json("User not Found!")
-else
-return res.status(201).json({result})
-}
-catch(err)
-{
-  return res.status(500).json({message:"Error Occured",error:err.message})
-}
-}
-
-const deleteProfile=async(req,res)=>
-{
-const userId=req.user._id;
-  try{
-  const result=await User.findByIdAndDelete(userId)
-  if(!result)
-return res.status(404).json("User not Found")
-  else
-  return res.status(200).json("Profile deleted Successfully!")
+const login = async (req, res) => {
+  const { email, password } = req.body;
+  if (!email || !password) {
+    return res.status(400).json({ message: "All fields are required" })
   }
-  catch(err)
-  {
-  return res.status(500).json({message:"Error Occured",error:err.message})
+  try {
+    const user = await User.findOne({ email })
+    if (!user)
+      return res.status(401).json({ message: "Invalid Email Address" })
+    const result = await bcrypt.compare(password, user.password)
+    if (!result)
+      return res.status(400).json({ message: "Incorrect Password" })
+    const token = jwt.sign(
+      { _id: user._id, role: user.role },
+      process.env.JWT_SECRET,
+      { expiresIn: process.env.JWT_EXPIRES_IN }
+    );
+    res.cookie("token", token, {
+      httpOnly: false,
+      secure: false,
+      sameSite: "Strict",
+      maxAge: 24 * 60 * 60 * 1000
+
+    });
+    console.log("Token from cookie:", token);
+
+    return res.status(200).json({ message: "Login Successfully!", user: user })
+  }
+  catch (err) {
+    return res.status(500).json({ messge: "An error occured:", error: err.message })
+
   }
 }
 
-const updateProfile=async(req,res)=>
-{
- const userId=req.user._id;
-  const updates=req.body;
-  try{
-const result=await User.findByIdAndUpdate(userId,updates,{new:true})
-return res.status(200).json({message:"Profile Updated SuccessFully!"})
+const getProfile = async (req, res) => {
+  const userId = req.user._id;
+  try {
+    const result = await User.findById(userId)
+    if (!result)
+      return res.status(404).json("User not Found!")
+    else
+      return res.status(201).json({ result })
   }
-  catch(err)
-  {
-    return res.status(500).json({message:"Error Occured",error:err.message})
+  catch (err) {
+    return res.status(500).json({ message: "Error Occured", error: err.message })
   }
 }
+
+const deleteProfile = async (req, res) => {
+  const userId = req.user._id;
+  try {
+    const result = await User.findByIdAndDelete(userId)
+    if (!result)
+      return res.status(404).json("User not Found")
+    else
+      return res.status(200).json("Profile deleted Successfully!")
+  }
+  catch (err) {
+    return res.status(500).json({ message: "Error Occured", error: err.message })
+  }
+}
+
+const updateProfile = async (req, res) => {
+  const userId = req.user._id;
+  const updates = req.body;
+  try {
+    const result = await User.findByIdAndUpdate(userId, updates, { new: true })
+    return res.status(200).json({ message: "Profile Updated SuccessFully!" })
+  }
+  catch (err) {
+    return res.status(500).json({ message: "Error Occured", error: err.message })
+  }
+}
+
 const logout = (req, res) => {
   res.clearCookie("token", {
     httpOnly: true,
     sameSite: "none"
   });
 
-  return res.status(200).json({message: "Logged out successfully"});
+  return res.status(200).json({ message: "Logged out successfully" });
 };
-export  {login,register,getProfile,deleteProfile,updateProfile,logout}
+export { login, register, getProfile, deleteProfile, updateProfile, logout }
