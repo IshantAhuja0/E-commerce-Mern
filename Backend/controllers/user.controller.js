@@ -5,7 +5,7 @@ import { Cart } from "../models/cart.model.js";
 const register = async (req, res) => {
   const { name, email, password, mobile_number, role,isVerified } = req.body;
 
-  if (!name || !email || !password || !mobile_number) {
+  if (!name && name.trim().length===0 || !email && email.trim().length===0 || !password && password.trim().length===0 || !mobile_number && mobile_number.trim().length===0) {
     return res.status(400).json({ message: "All fields are required" });
   }
 
@@ -75,7 +75,7 @@ const login = async (req, res) => {
     });
     console.log("Token from cookie:", token);
 
-    return res.status(200).json({ message: "Login Successfully!", user: user })
+    return res.status(200).json({ message: "Login Successfully!", user: user,token:token })
   }
   catch (err) {
     return res.status(500).json({ messge: "An error occured:", error: err.message })

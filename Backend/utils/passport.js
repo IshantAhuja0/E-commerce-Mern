@@ -21,8 +21,8 @@ passport.use(
           googleId: profile.id,
           name: profile.displayName,
           email: profile.emails?.[0]?.value,
-          mobile_number:"12345",
-          password:"user",
+          // mobile_number:"12345",
+          // password:"user",
           role:"user"
           // avatar: profile.photos?.[0]?.value,
         });

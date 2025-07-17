@@ -2,7 +2,7 @@ import express from "express";
 import cookieParser from "cookie-parser";
 import cors from "cors"
 // // import passport from "passport";
-// import "./config/passport.js";
+import "./utils/passport.js";
 
 const app=express();
 app.use(cors({
@@ -36,10 +36,7 @@ app.use("/api/cart-items", cartItemRoutes);
 //wishlist routes
 app.use("/api/wishlist",wishlist);
 
-//wishlist routes
-app.use("/api/wishlist",wishlist);
-
 //varient
-app.use("api/variant",variantRouter)
-app.use("api/category",categoryRouter)
+app.use("/api/variant",variantRouter)
+app.use("/api/category",categoryRouter)
 export {app};

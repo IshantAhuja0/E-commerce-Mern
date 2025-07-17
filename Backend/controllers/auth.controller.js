@@ -1,3 +1,5 @@
+import dotenv from "dotenv"
+dotenv.configDotenv()
 import jwt from "jsonwebtoken";
 
 export const generateToken = (user) => {
@@ -15,6 +17,6 @@ export const sendTokenResponse = (req, res) => {
     secure: false, // true in production (HTTPS)
     maxAge: 7 * 24 * 60 * 60 * 1000,
   });
-
-  res.redirect("http://localhost:3000"); // or send JSON instead
+const frontendUrl=process.env.frontendUrl || "http://localhost:5173"
+  res.redirect(frontendUrl); // or send JSON instead
 };
