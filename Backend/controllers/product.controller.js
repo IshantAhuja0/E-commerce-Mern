@@ -175,12 +175,128 @@ const uploadImages = asyncHandler(async (req, res) => {
   return res.status(200).json(new ApiResponse(200, result, "images uploaded successfully"))
 })
 
-const getInitialProducts= asyncHandler(async (req,res)=>{
-const category=req.params?.category
-const isCategoryExists = await Category.findOne({title:category})
-if(!isCategoryExists) throw new ApiError(404,"No category found")
-  const products=await Product.find({categoryId:isCategoryExists._id})
-if(!products||products.length===0) throw new ApiError(404,"No Products found in this category")
-  return res.status(200).json(new ApiResponse(200,products,"Products fetched successfully"))
+const getInitialProducts = asyncHandler(async (req, res) => {
+  const category = req.params?.category.toLowerCase()
+  if (category === "all") {
+    const products = await Review.aggregate([
+      // Step 1: Group reviews by productId
+      //it bundels reviews with same productId together
+      {
+        $group: {
+          _id: "$productId",
+          averageRating: { $avg: "$rating" },
+          reviewCount: { $sum: 1 }
+        }
+      },
+
+      // Step 2: Only keep products with decent rating
+      //keeps reviews with avg rating>2
+      {
+        $match: {
+          averageRating: { $gt: 2 }
+        }
+      },
+
+      // Step 3: Add a score to sort by (you can tune this formula)
+      {
+        $addFields: {
+          popularityScore: { $multiply: ["$averageRating", "$reviewCount"] }
+        }
+      },
+
+      // Step 4: Sort by score (most positively reviewed)
+      {
+        $sort: { popularityScore: -1 }
+      },
+
+      // Step 5: Limit to top 15
+      {
+        $limit: 15
+      },
+
+      // Step 6: Join with products collection to get product info
+      {
+        $lookup: {
+          from: "products",
+          localField: "_id",
+          foreignField: "_id",
+          as: "product"
+        }
+      },
+
+      // Step 7: Flatten
+      {
+        $unwind: "$product"
+      },
+
+      // Step 8: Shape the final output
+      {
+        $project: {
+          _id: 0,
+          productId: "$_id",
+          averageRating: 1,
+          reviewCount: 1,
+          popularityScore: 1,
+          product: 1
+        }
+      }
+    ])
+
+    if (!products || products.length === 0) throw new ApiError(404, "No Products found in this category")
+    return res.status(200).json(new ApiResponse(200, products, "Products fetched successfully"))
+  }
+  const isCategoryExists = await Category.findOne({ title: category })
+  if (!isCategoryExists) throw new ApiError(404, "No category found")
+  const products = await Product.aggregate([
+    {
+      $match: {
+        categoryId: isCategoryExists._id
+      }
+    },
+    {
+      $lookup: {
+        from: "reviews",
+        localField: "_id",
+        foreignField: "productId",
+        as: "reviews"
+      }
+    },
+    {
+      $addFields: {
+        averageRating: { $avg: "$reviews.rating" },
+        reviewCount: { $size: "$reviews" }
+      }
+    },
+    {
+      $addFields: {
+        popularityScore: {
+          $cond: [
+            { $gt: ["$averageRating", 2] },
+            { $multiply: ["$averageRating", "$reviewCount"] },
+            0
+          ]
+        }
+      }
+    },
+    {
+      $sort: { popularityScore: -1 }
+    },
+    {
+      $limit: 15
+    },
+    {
+      $project: {
+        title: 1,
+        price: 1,
+        images: 1,
+        averageRating: 1,
+        reviewCount: 1,
+        popularityScore: 1
+      }
+    }
+  ])
+
+  if (!products || products.length === 0) throw new ApiError(404, "No Products found in this category")
+  return res.status(200).json(new ApiResponse(200, products, "Products fetched successfully"))
 })
-export { getProduct, addProduct, deleteProduct, updateProduct, deleteImages, uploadImages ,getInitialProducts}
+export { getProduct, addProduct, deleteProduct, updateProduct, deleteImages, uploadImages, getInitialProducts }

@@ -1,33 +1,35 @@
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import { FcGoogle } from 'react-icons/fc';
-import { Link, useNavigate } from 'react-router-dom';
-import axios from "axios"
+import React, { useState } from "react";
+import { motion } from "framer-motion";
+import { FcGoogle } from "react-icons/fc";
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
 const Login = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-const navigate=useNavigate();
-  const handleSubmit = async(e) => {
-    try
-    {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const navigate = useNavigate();
+  const handleSubmit = async (e) => {
+    try {
       e.preventDefault();
- const res=await axios.post("http://localhost:3000/api/users/login",
-{
-  email,password
-},{withCredentials:true})
-console.log("Token from response:", res.data.token);
-if(res.data.token)
-    localStorage.setItem("token",res.data.token)
+      const res = await axios.post(
+        "http://localhost:3000/api/users/login",
+        {
+          email,
+          password,
+        },
+        { withCredentials: true }
+      );
+      console.log("Token from response:", res.data.token);
+      if (res.data.token) localStorage.setItem("token", res.data.token);
 
-  alert("user logged in successfully!")
-navigate("/")
+      alert("user logged in successfully!");
+      navigate("/");
+    } catch (err) {
+      console.log("error Occured while logging in ", err);
     }
-    catch(err)
-    {
-    console.log("error Occured while logging in ",err)
-    }
-}
-
+  };
+  const handleGoogleLogin = () => {
+    window.open("http://localhost:3000/api/users/google", "_self");
+  };
   return (
     // Changed background to a cooler grey to match the new palette
     <div className="min-h-screen flex items-center justify-center bg-slate-200 font-sans p-4">
@@ -50,6 +52,7 @@ navigate("/")
 
         {/* Continue with Google Button */}
         <motion.button
+          onClick={handleGoogleLogin}
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           className="w-full flex items-center justify-center py-3 px-4 border border-slate-300 rounded-lg text-slate-700 font-medium hover:bg-slate-50 transition-colors"
@@ -68,7 +71,10 @@ navigate("/")
         {/* Login Form */}
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="space-y-2">
-            <label htmlFor="email" className="text-sm font-medium text-slate-600">
+            <label
+              htmlFor="email"
+              className="text-sm font-medium text-slate-600"
+            >
               Email Address
             </label>
             <motion.input
@@ -95,7 +101,10 @@ navigate("/")
                 Password
               </label>
               {/* Updated link color to use the main accent color on hover */}
-              <a href="#" className="text-sm text-slate-500 hover:text-midnight">
+              <a
+                href="#"
+                className="text-sm text-slate-500 hover:text-midnight"
+              >
                 Forgot password?
               </a>
             </div>
@@ -127,9 +136,11 @@ navigate("/")
         </form>
 
         <p className="text-center text- xl text-slate-500 font-medium">
-          Don't have an account?{' '}
-          {/* Sign up link also uses the accent color */}
-          <Link to="/register" className="font-medium text-midnight hover:underline">
+          Don't have an account? {/* Sign up link also uses the accent color */}
+          <Link
+            to="/register"
+            className="font-medium text-midnight hover:underline"
+          >
             Sign up
           </Link>
         </p>
