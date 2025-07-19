@@ -3,6 +3,7 @@ import { uploadOnCloudinary, deleteFromCloudinary } from "../utils/cloudinary.js
 import ApiError from "../utils/apiError.js"
 import ApiResponse from "../utils/apiResponse.js"
 import { Product } from "../models/product.model.js"
+import { Review } from "../models/review.modal.js"
 import { Category } from "../models/category.model.js"
 
 const getProduct = asyncHandler(async (req, res) => {
