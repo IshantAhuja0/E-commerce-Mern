@@ -1,11 +1,11 @@
 // payment.routes.js
 import express from "express";
 import dotenv from "dotenv";
-import Stripe from "stripe"; // ✅ This is the correct import
+import Stripe from "stripe"; 
 
 dotenv.config();
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY); // ✅ No `.default` needed
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY); 
 
 const router = express.Router();
 
