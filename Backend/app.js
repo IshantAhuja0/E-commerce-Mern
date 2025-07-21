@@ -24,6 +24,8 @@ import wishlist from "./routes/wishlist.routes.js"
 import variantRouter from "./routes/variant.routes.js";
 import categoryRouter from "./routes/category.routes.js";
 import reviewRouter from "./routes/review.routes.js";
+import orderRouter from "./routes/order.routes.js";
+import paymentRoutes from "./routes/payment.routes.js";
 // routes declaration
 app.get("/",(req,res)=>{
   res.send("all good in server")
@@ -42,4 +44,12 @@ app.use("/api/variant",variantRouter)
 app.use("/api/category",categoryRouter)
 //review
 app.use("/api/review",reviewRouter)
+
+//order
+app.use("/api/order",orderRouter)
+
+//payment
+
+app.use("/api/payment", paymentRoutes);
+
 export {app};

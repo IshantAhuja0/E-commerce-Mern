@@ -11,6 +11,8 @@ import { BrowserRouter, Route ,Routes} from 'react-router-dom';
 import Wishlist from '../pages/Wishlist';
 import Cart from "../pages/Cart"
 import Profile from "../pages/Profile"
+import { Order } from '../../../Backend/models/order.model';
+import Orders from '../pages/Orders';
 const IndexRoutes = () => {
   return (
     <div>
@@ -26,6 +28,7 @@ const IndexRoutes = () => {
       <Route path="/wishlist" element={<Wishlist/>}></Route>
       <Route path="/cart" element={<Cart/>}></Route>
       <Route path="/profile" element={<Profile/>}></Route>
+      <Route path="/orders" element={<Orders/>}></Route>
       </Routes>
       <Footer/>
       </BrowserRouter>
